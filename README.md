@@ -1,5 +1,3 @@
-# university_nodejs_express
-
 # Getting Started with Node.js
 
 
