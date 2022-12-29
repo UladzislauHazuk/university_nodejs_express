@@ -6,32 +6,40 @@ const {
     updateUsers,
     deleteUsers,
     patchUsers
-} = require('../services/services.user')
+} = require('../services/services.user');
+const {
+    isValidInfoId,
+    isValidUserId,
+    isValidBody
+} = require('../helper/validation');
+const {
+    buildResponse
+} = require('../helper/buildResponse');
 
 const route = express.Router()
 
 route.get('/', async (req, res) => {
     try {
         const user = await getUsers()
-        res.status(200).send(user)
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
-route.get('/:id', async (req, res) => {
+route.get('/:user_id', isValidUserId, async (req, res) => {
     try {
         const {
-            id
+            user_id
         } = req.params
-        const user = await getUsersById(id)
-        res.status(200).send(user)
+        const user = await getUsersById(user_id)
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
-route.post('/', async (req, res) => {
+route.post('/', isValidBody, async (req, res) => {
     try {
         const {
             name,
@@ -41,13 +49,13 @@ route.post('/', async (req, res) => {
             age
         } = req.body;
         const user = await createUsers(name, surname, birth, city, age);
-        res.status(200).send(user);
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
-route.put('/:info_id', async (req, res) => {
+route.put('/:info_id', isValidInfoId, isValidBody, async (req, res) => {
     try {
         const {
             info_id
@@ -59,34 +67,34 @@ route.put('/:info_id', async (req, res) => {
             city,
             age
         } = req.body;
-        const users = await updateUsers(name, surname, birth, city, age, info_id)
-        res.status(200).send(users);
+        const user = await updateUsers(name, surname, birth, city, age, info_id)
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
-route.delete('/:info_id', async (req, res) => {
+route.delete('/:info_id', isValidInfoId, async (req, res) => {
     try {
         const {
             info_id
         } = req.params;
-        const users = await deleteUsers(info_id);
-        res.status(200).send(users);
+        const user = await deleteUsers(info_id);
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
-route.patch('/:info_id', async (req, res) => {
+route.patch('/:info_id', isValidInfoId, async (req, res) => {
     try {
         const {
             info_id
         } = req.params;
-        const users = await patchUsers(info_id, req.body);
-        res.status(200).send(users);
+        const user = await patchUsers(info_id, req.body);
+        buildResponse(res, 200, user);
     } catch (error) {
-        res.status(500).send(error.message)
+        buildResponse(res, 404, error.message);
     }
 })
 
